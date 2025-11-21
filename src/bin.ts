@@ -11,7 +11,7 @@ const program = new Command()
 program
   .option('--enroll <key>', 'Enrollment Key')
   .option('-c, --controller <url>', 'Controller URL')
-  .option('-s, --start', 'Start the Sounder')
+  .option('-s, --start', 'Start the Button')
   .option('-u, --update-config', 'Update config from the controller')
   .version(VERSION)
 
