@@ -25,7 +25,8 @@ jobs:
         uses: actions/cache@v4
         with:
           path: node_modules
-          key: node-modules-${{ hashFiles('package-lock.json',
+          key:
+            node-modules-${{ hashFiles('package-lock.json',
             'prisma/schema.prisma') }}
 
       - name: 📥 Download deps
@@ -53,7 +54,8 @@ jobs:
         uses: actions/cache@v4
         with:
           path: node_modules
-          key: node-modules-${{ hashFiles('package-lock.json',
+          key:
+            node-modules-${{ hashFiles('package-lock.json',
             'prisma/schema.prisma') }}
 
       - name: 🔬 Lint
@@ -80,7 +82,8 @@ jobs:
         uses: actions/cache@v4
         with:
           path: node_modules
-          key: node-modules-${{ hashFiles('package-lock.json',
+          key:
+            node-modules-${{ hashFiles('package-lock.json',
             'prisma/schema.prisma') }}
 
       - name: ✨ Prettier Check
@@ -107,11 +110,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: node_modules
-          key: node-modules-${{ hashFiles('package-lock.json',
-            'prisma/schema.prisma') }}
-
-      - name: 💽 Create Database
-        run: npx prisma migrate dev
+          key: node-modules-${{ hashFiles('package-lock.json') }}
 
       - name: 🔬 Typecheck
         run: npm run build
@@ -137,14 +136,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: node_modules
-          key: node-modules-${{ hashFiles('package-lock.json',
-            'prisma/schema.prisma') }}
-
-      - name: 💽 Create Database
-        run: npx prisma migrate dev
-
-      - name: 📂 Create Folders
-        run: mkdir -p sounds
+          key: node-modules-${{ hashFiles('package-lock.json') }}
 
       - name: 🧪 vitest
         run: npm run ci
