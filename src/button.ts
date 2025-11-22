@@ -12,6 +12,11 @@ import {VERSION} from './constants'
 
 const {writeFile} = fs.promises
 
+// Add _destroyed to Timeouts
+type Timeout = NodeJS.Timeout & {
+  _destroyed: boolean
+}
+
 export const button = async () => {
   await log(`🚀 Launching Button`)
   await writeFile(
@@ -53,8 +58,8 @@ export const button = async () => {
   })
 
   const buttonHandlers = (btn: Gpio) => {
-    let triggerTimeout: NodeJS.Timeout | null = null
-    let holdTimeout: NodeJS.Timeout | null = null
+    let triggerTimeout: Timeout | null = null
+    let holdTimeout: Timeout | null = null
 
     btn.watch(async (err, value) => {
       if (err) {
@@ -64,7 +69,8 @@ export const button = async () => {
 
       if (value === 1) {
         // Button has been pressed.
-        if (triggerTimeout) {
+        await log('👇 Button Pressed')
+        if (triggerTimeout && !triggerTimeout._destroyed) {
           // There is currently a trigger timeout, clear it and return the LED to on.
           clearTimeout(triggerTimeout)
           ledInterface.setLEDState('on')
@@ -77,13 +83,13 @@ export const button = async () => {
           // Hold duration is greater than 0.
           holdTimeout = setTimeout(() => {
             ledInterface.setLEDState('off')
-          }, config.holdDuration * 1000)
+          }, config.holdDuration * 1000) as Timeout
         }
       }
 
       if (value === 0) {
         // Button has been released
-        if (holdTimeout) {
+        if (holdTimeout && !holdTimeout._destroyed) {
           // There is a hold timeout that can be cleared
           clearTimeout(holdTimeout)
           return
@@ -95,7 +101,7 @@ export const button = async () => {
           triggerTimeout = setTimeout(async () => {
             await buttonApi('/trigger', {})
             ledInterface.setLEDState('on')
-          }, config.cancelDuration * 1000)
+          }, config.cancelDuration * 1000) as Timeout
           ledInterface.setLEDState('rapid_flash')
 
           return
