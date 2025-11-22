@@ -63,6 +63,7 @@ export const button = async () => {
   const buttonHandlers = (btn: Gpio) => {
     let triggerTimeout: Timeout | null = null
     let holdTimeout: Timeout | null = null
+    let cancelled: boolean = false
 
     btn.watch(async (err, value) => {
       if (err) {
@@ -77,6 +78,7 @@ export const button = async () => {
           // There is currently a trigger timeout, clear it and return the LED to on.
           clearTimeout(triggerTimeout)
           ledInterface.setLEDState('on')
+          cancelled = true
           await log(`❌ Action Cancelled`)
           return
         }
@@ -99,7 +101,12 @@ export const button = async () => {
         }
 
         // No Hold timeout (or timeout has passed), check the cancel duration
-        if (config.cancelDuration) {
+        if (config.cancelDuration > 0) {
+          if (cancelled) {
+            cancelled = false
+            return
+          }
+
           // There is a cancel duration, set a timeout for the trigger
           triggerTimeout = setTimeout(async () => {
             await log('🚀 Triggering Action')
