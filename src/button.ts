@@ -102,6 +102,7 @@ export const button = async () => {
         if (config.cancelDuration) {
           // There is a cancel duration, set a timeout for the trigger
           triggerTimeout = setTimeout(async () => {
+            await log('🚀 Triggering Action')
             await buttonApi('/trigger', {})
             ledInterface.setLEDState('on')
           }, config.cancelDuration * 1000) as Timeout
@@ -111,6 +112,7 @@ export const button = async () => {
         }
 
         // No cancel duration, trigger now
+        await log('🚀 Triggering Action')
         await buttonApi('/trigger', {})
 
         return
