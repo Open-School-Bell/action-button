@@ -15,10 +15,11 @@ const {writeFile} = fs.promises
 export const button = async () => {
   await log(`🚀 Launching Button`)
   await writeFile(
-    path.join(process.cwd(), 'sounder.pid'),
+    path.join(process.cwd(), 'button.pid'),
     process.pid.toString()
   )
 
+  await updateConfig()
   let config = await getConfig()
 
   const ledInterface = led(config.ledPin)
@@ -76,7 +77,7 @@ export const button = async () => {
           // Hold duration is greater than 0.
           holdTimeout = setTimeout(() => {
             ledInterface.setLEDState('off')
-          }, config.holdDuration)
+          }, config.holdDuration * 1000)
         }
       }
 
@@ -94,7 +95,7 @@ export const button = async () => {
           triggerTimeout = setTimeout(async () => {
             await buttonApi('/trigger', {})
             ledInterface.setLEDState('on')
-          }, config.cancelDuration)
+          }, config.cancelDuration * 1000)
           ledInterface.setLEDState('rapid_flash')
 
           return
