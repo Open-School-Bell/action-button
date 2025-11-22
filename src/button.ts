@@ -29,7 +29,7 @@ export const button = async () => {
 
   const ledInterface = led(config.ledPin)
 
-  cron.schedule('* * * * *', async () => {
+  const minutely = async () => {
     const pongResponse = await buttonApi('/ping', {version: VERSION})
 
     if (!pongResponse) {
@@ -51,7 +51,10 @@ export const button = async () => {
     }
 
     config = {...newConfig}
-  })
+  }
+  await minutely()
+
+  cron.schedule('* * * * *', minutely)
 
   let buttonInterface = new Gpio(config.buttonPin, 'in', 'both', {
     debounceTimeout: 10
