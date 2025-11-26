@@ -24,7 +24,7 @@ export const button = async () => {
     process.pid.toString()
   )
 
-  await updateConfig()
+  await updateConfig(true)
   let config = await getConfig()
 
   const ledInterface = led(config.ledPin)
@@ -112,6 +112,7 @@ export const button = async () => {
           triggerTimeout = setTimeout(async () => {
             await log('🚀 Triggering Action after cancel period')
             await buttonApi('/trigger', {})
+            await updateConfig(true)
             ledInterface.setLEDState('on')
           }, config.cancelDuration * 1000) as Timeout
           ledInterface.setLEDState('rapid_flash')
@@ -122,6 +123,7 @@ export const button = async () => {
         // No cancel duration, trigger now
         await log('🚀 Triggering Action on button press')
         await buttonApi('/trigger', {})
+        await updateConfig(true)
 
         return
       }

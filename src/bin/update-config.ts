@@ -7,7 +7,9 @@ import {buttonApi} from '../utils/button-api'
 
 const {writeFile} = fs.promises
 
-export const updateConfig = async (): Promise<Config> => {
+export const updateConfig = async (
+  writeToLog: boolean = false
+): Promise<Config> => {
   const config = await getConfig()
 
   await buttonApi('/ping', {})
@@ -23,7 +25,9 @@ export const updateConfig = async (): Promise<Config> => {
   const content = JSON.stringify({...result, controller, key}, null, ' ')
 
   await writeFile(path.join(process.cwd(), 'button.json'), content)
-  await log(`✅ Config updated!`)
+  if (writeToLog) {
+    await log(`✅ Config updated!`)
+  }
 
   return {...result, controller, key}
 }
