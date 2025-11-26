@@ -94,6 +94,7 @@ export const button = async () => {
 
       if (value === 0) {
         // Button has been released
+        await log('☝️ Button Released')
         if (holdTimeout && !holdTimeout._destroyed) {
           // There is a hold timeout that can be cleared
           clearTimeout(holdTimeout)
